@@ -44,19 +44,42 @@ def count_repeats(word):
     letters = set([letter for letter in word])
     return 5-len(letters)
 
-def predict_word(word : str, date : datetime):
-    # Use Prophet Model to Predict Num Users
-    # Use Prophet Model to Predict Num Hard Mode 
-    # Calculate word_score,  word_occurence, vowels, repeats
+def predict_word(word : str):
+    # Calculate word_score, word_occurence, vowels, repeats
+    ws = word_score(word)
+    wo = occurrence_score(word)
+    v = count_vowels(word)
+    r = count_repeats(word)
+    data_dict = {'word' : [word], 'word_score' : [ws],  'word_occurrence' : [wo],  'vowels' : [v], 'repeats' : [r]}
+    df = pd.DataFrame(data=data_dict)
     # Feed into Random Forest to get Avg Guesses
+    df = rf_avg_guesses(df)
     # Feed into Random Forest to get Distribution
+    df = rf_guesses_distribution(df)
+    return df
 
 def rf_avg_guesses(df : pd.DataFrame):
     features = ['word_score',  'word_occurrence',  'vowels', 'repeats']
     targets = 'avg_num_guesses'
     # Load the grid search model
-    grid_search = joblib.load('avg_guesses_model.joblib')
+    grid_search = joblib.load('../src/avg_guesses_model.joblib')
 
     # Use the model to make predictions
-    predictions = grid_search.predict(df[features])
+    df[targets] = grid_search.predict(df[features])
+    return df
+
+
+def rf_guesses_distribution(df: pd.DataFrame):
+    features = ['avg_num_guesses']
+    targets = ['in1', 'in2', 'in3', 'in4',
+               'in5', 'in6', 'over6']
+    # Load the grid search model
+    grid_search = joblib.load('../src/guesses_distribution_model.joblib')
+
+    # Use the model to make predictions
+    df[targets] = grid_search.predict(df[features])
+    return df
+
     
+if __name__ == '__main__':
+    print(predict_word("eerie"))
