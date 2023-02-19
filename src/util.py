@@ -53,10 +53,12 @@ def predict_word(word : str):
     data_dict = {'word' : [word], 'word_score' : [ws],  'word_occurrence' : [wo],  'vowels' : [v], 'repeats' : [r]}
     df = pd.DataFrame(data=data_dict)
     # Feed into Random Forest to get Avg Guesses
-    df = rf_avg_guesses(df)
+    df_rf = rf_avg_guesses(df)
+    df_lr = lr_avg_guesses(df)
     # Feed into Random Forest to get Distribution
-    df = rf_guesses_distribution(df)
-    return df
+    df_rf = rf_guesses_distribution(df_rf)
+    df_lr = rf_guesses_distribution(df_lr)
+    return df_rf, df_lr
 
 def rf_avg_guesses(df : pd.DataFrame):
     features = ['word_score',  'word_occurrence',  'vowels', 'repeats']
@@ -68,6 +70,16 @@ def rf_avg_guesses(df : pd.DataFrame):
     df[targets] = grid_search.predict(df[features])
     return df
 
+
+def lr_avg_guesses(df: pd.DataFrame):
+    features = ['word_score',  'word_occurrence',  'vowels', 'repeats']
+    targets = 'avg_num_guesses'
+    # Load the grid search model
+    grid_search = joblib.load('../src/avg_guesses_model_lr.joblib')
+
+    # Use the model to make predictions
+    df[targets] = grid_search.predict(df[features])
+    return df
 
 def rf_guesses_distribution(df: pd.DataFrame):
     features = ['avg_num_guesses']
