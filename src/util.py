@@ -1,5 +1,4 @@
 import urllib 
-import requests
 import pandas as pd
 
 
@@ -23,11 +22,24 @@ def calculate_freqs():
 
 letter_freqs = calculate_freqs()
 
-def word_freq(word):
+def word_score(word):
     return sum([letter_freqs[letter] for letter in word])
 
-def word_freqs(words):
-    return words.apply(word_freq)
+def word_scores(words):
+    return words.apply(word_score)
 
 def occurrence_score(word):
     return allowed[allowed.word == word].freqs.values[0]
+
+
+vowels = ['a','e','i','o','u']
+def count_vowels(word):
+    count = 0
+    for letter in word:
+        if letter in vowels:
+            count+=1
+    return count
+
+def count_repeats(word):
+    letters = set([letter for letter in word])
+    return 5-len(letters)
