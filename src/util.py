@@ -1,7 +1,7 @@
 import urllib 
 import pandas as pd
-
-
+import joblib
+import datetime
 
 allowed = pd.read_csv('../data/allowed_words.csv')
 allowed_words = allowed.word.values
@@ -43,3 +43,20 @@ def count_vowels(word):
 def count_repeats(word):
     letters = set([letter for letter in word])
     return 5-len(letters)
+
+def predict_word(word : str, date : datetime):
+    # Use Prophet Model to Predict Num Users
+    # Use Prophet Model to Predict Num Hard Mode 
+    # Calculate word_score,  word_occurence, vowels, repeats
+    # Feed into Random Forest to get Avg Guesses
+    # Feed into Random Forest to get Distribution
+
+def rf_avg_guesses(df : pd.DataFrame):
+    features = ['word_score',  'word_occurrence',  'vowels', 'repeats']
+    targets = 'avg_num_guesses'
+    # Load the grid search model
+    grid_search = joblib.load('avg_guesses_model.joblib')
+
+    # Use the model to make predictions
+    predictions = grid_search.predict(df[features])
+    
