@@ -72,8 +72,9 @@ def rf_avg_guesses(df : pd.DataFrame):
 
 
 def lr_avg_guesses(df: pd.DataFrame):
-    features = ['word_score',  'word_occurrence',  'vowels', 'repeats']
+    features = ['word_score','vowels','repeats','word_occurrence']
     targets = 'avg_num_guesses'
+    print(df[features])
     # Load the grid search model
     grid_search = joblib.load('../src/avg_guesses_model_lr.joblib')
 
