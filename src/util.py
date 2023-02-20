@@ -1,7 +1,7 @@
 import urllib 
 import pandas as pd
 import joblib
-import datetime
+import requests
 
 allowed = pd.read_csv('../data/allowed_words.csv')
 allowed_words = allowed.word.values
@@ -34,6 +34,12 @@ for i in range(26):
 def get_letter_num(letter):
     return order_freqs[letter]
 
+def get_freq(word):
+    encoded_query = urllib.parse.quote(word)
+    params = {'corpus': 'eng-us', 'query': encoded_query, 'topk': 3, 'format': 'tsv'} 
+    params = '&'.join('{}={}'.format(name, value) for name, value in params.items())
+    response = requests.get('https://api.phrasefinder.io/search?' + params)
+    return sum(list(map(int,response.text.split()[1::7])))
 
 def word_score(word):
     return sum([letter_freqs[letter] for letter in word])
